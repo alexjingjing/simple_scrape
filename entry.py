@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import logging.config
 import time
+import signal
 
 import leancloud
 from selenium import webdriver
@@ -12,8 +13,9 @@ hk_stock_list = ['00700']
 hk_url = 'http://stock.finance.sina.com.cn/hkstock/quotes/{}.html'
 leancloud.init("OiLSQcrjrx0bGhil1d6cxn4c-gzGzoHsz", "qlxrzsclqoUw1Htl5xSXRETI")
 dcap = dict(DesiredCapabilities.PHANTOMJS)
-PHANTOMJS_PATH = 'D:\\Python\\phantomjs-2.1.1-windows\\phantomjs-2.1.1-windows\\bin\\phantomjs.exe'
+# PHANTOMJS_PATH = 'D:\\Python\\phantomjs-2.1.1-windows\\phantomjs-2.1.1-windows\\bin\\phantomjs.exe'
 # PHANTOMJS_PATH = "/home/lsm/phantomjs-2.1.1-linux-x86_64/bin/phantomjs"
+PHANTOMJS_PATH = "/Users/liusiming/phantomjs/phantomjs-2.1.1-macosx/bin/phantomjs"
 
 StockPrice = leancloud.Object.extend('StockPrice')
 
@@ -33,9 +35,11 @@ def crawl_us(url, code):
         logger.info('get {} stock price'.format(code))
         price = float(driver.title.split(' ')[1].split('(')[0])
         save(code, price)
+        driver.service.process.send_signal(signal.SIGTERM)
         driver.quit()
     except Exception as e:
         logger.error(str(e))
+        driver.service.process.send_signal(signal.SIGTERM)
         driver.quit()
 
 
@@ -53,9 +57,11 @@ def crawl_hk(url, code):
         logger.info('get {} stock price'.format(code))
         price = float(title.split(' ')[2].split('(')[0])
         save(code, price)
+        driver.service.process.send_signal(signal.SIGTERM)
         driver.quit()
     except Exception as e:
         logger.error(str(e))
+        driver.service.process.send_signal(signal.SIGTERM)
         driver.quit()
 
 
