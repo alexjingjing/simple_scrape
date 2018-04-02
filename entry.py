@@ -14,13 +14,23 @@ hk_url = 'http://stock.finance.sina.com.cn/hkstock/quotes/{}.html'
 leancloud.init("OiLSQcrjrx0bGhil1d6cxn4c-gzGzoHsz", "qlxrzsclqoUw1Htl5xSXRETI")
 dcap = dict(DesiredCapabilities.PHANTOMJS)
 # PHANTOMJS_PATH = 'D:\\Python\\phantomjs-2.1.1-windows\\phantomjs-2.1.1-windows\\bin\\phantomjs.exe'
-# PHANTOMJS_PATH = "/home/lsm/phantomjs-2.1.1-linux-x86_64/bin/phantomjs"
-PHANTOMJS_PATH = "/Users/liusiming/phantomjs/phantomjs-2.1.1-macosx/bin/phantomjs"
+PHANTOMJS_PATH = "/home/lsm/phantomjs-2.1.1-linux-x86_64/bin/phantomjs"
+# PHANTOMJS_PATH = "/Users/liusiming/phantomjs/phantomjs-2.1.1-macosx/bin/phantomjs"
 
 StockPrice = leancloud.Object.extend('StockPrice')
 
 logging.config.fileConfig("logger.conf")
 logger = logging.getLogger('example')
+
+stock_map = {
+    'GOOG': '谷歌',
+    'AMZN': '亚马逊',
+    'FB': '脸书',
+    'AAPL': '苹果',
+    'BABA': '阿里巴巴',
+    'TSLA': '特斯拉',
+    '00700': '腾讯',
+}
 
 
 def crawl_us(url, code):
@@ -72,6 +82,7 @@ def save(code, price):
         stock_price.set('code', code)
         stock_price.set('price', float(price))
         stock_price.set('date', date)
+        stock_price.set('name', stock_map[code])
         try:
             stock_price.save()
         except Exception as e:
